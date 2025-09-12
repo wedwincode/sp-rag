@@ -2,7 +2,7 @@ import chromadb
 from chromadb.config import Settings
 from yandex_cloud_ml_sdk import YCloudML
 
-from settings import settings
+from src.settings import settings
 
 
 chroma_client = chromadb.HttpClient(host='localhost',

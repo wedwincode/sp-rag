@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     YC_FOLDER_ID: str = ""
     YC_API_KEY: str = ""
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file="../.env")
 
 
 settings = Settings()

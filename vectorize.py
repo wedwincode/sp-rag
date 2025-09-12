@@ -5,7 +5,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from yandex_cloud_ml_sdk import YCloudML
 from chromadb.config import Settings
 
-from settings import settings
+from src.settings import settings
 
 MODEL_URI = f"emb://{settings.YC_FOLDER_ID}/text-search-doc/latest"
 
