@@ -3,32 +3,37 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 import requests
+from bs4 import BeautifulSoup
 from pydantic import HttpUrl
+
+from src.utils.logs import setup_logger
 
 
 class AbstractDownloader(ABC):
     @abstractmethod
-    def download(self) -> None:
+    def download_all(self) -> list[Path]:
         pass
 
 
 class HTMLDownloader(AbstractDownloader):
-    logging.basicConfig(filename="../logs/downloader.log",
-                        level=logging.DEBUG,
-                        format='%(asctime)s - %(levelname)s - %(message)s')
-    logger = logging.getLogger()
+    logger = setup_logger("html_downloader", "../logs/downloader.log")
 
-    def __init__(self, urls: list[HttpUrl], output_dir: str = "../data/pages"):
+    def __init__(self, urls: list[HttpUrl], output_dir: str = "../data/html", selector: str = "div.field-item.even"):
         self.urls = urls
         self.output_dir = Path(output_dir)
+        self.selector = selector
 
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
-    def download(self) -> None:
+    def download_all(self) -> list[Path]:
+        paths: list[Path] = []
         for i, url in enumerate(self.urls, start=1):
-            self._download_url(url, i)
+            downloaded_path = self._download_one(url, i)
+            if downloaded_path:
+                paths.append(downloaded_path)
+        return paths
 
-    def _download_url(self, url: HttpUrl, idx: int) -> None:
+    def _download_one(self, url: HttpUrl, idx: int) -> Path | None:
         url_as_str = str(url)
         self.logger.debug(f"{idx}/{len(self.urls)} Downloading {url_as_str}")
         try:
@@ -36,10 +41,18 @@ class HTMLDownloader(AbstractDownloader):
             response.raise_for_status()
         except Exception as e:
             self.logger.error(e)
-            return
+            return None
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+        items = soup.select_one(self.selector)
+
+        if not items:
+            self.logger.error(f"No items found on {url_as_str}")
 
         url_path = url.path[1:] if url.path and url.path.startswith("/") else url.path
         out_path = self.output_dir / f"{url_path}.html"
-        out_path.write_text(response.text, encoding="utf-8")
+        out_path.write_text(str(items), encoding="utf-8")
 
         self.logger.debug(f"{idx}/{len(self.urls)} Downloaded {url_as_str}")
+
+        return out_path

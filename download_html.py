@@ -5,7 +5,7 @@ from pathlib import Path
 from pydantic import HttpUrl
 
 
-def download_field_items(urls: list[HttpUrl], out_dir="pages"):
+def download_field_items(urls: list[HttpUrl], out_dir="html"):
     """
     Скачивает страницы по ссылкам, достает содержимое div.field-items
     и сохраняет в html файлы.
