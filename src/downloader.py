@@ -29,11 +29,13 @@ class HTMLDownloader(AbstractDownloader):
     def download_all(self) -> None:
         for document in self.documents:
             if document.initial_url:
-                downloaded_path = self._download_one(document.initial_url)
+                downloaded_path, name = self._download_one(document.initial_url)
                 if downloaded_path:
                     document.downloaded_path = downloaded_path
+                if name:
+                    document.name = name
 
-    def _download_one(self, url: HttpUrl) -> Path | None:
+    def _download_one(self, url: HttpUrl) -> tuple[Path | None, str | None]:
         url_as_str = str(url)
         self.logger.debug(f"Downloading {url_as_str}")
         try:
@@ -41,10 +43,12 @@ class HTMLDownloader(AbstractDownloader):
             response.raise_for_status()
         except Exception as e:
             self.logger.error(e)
-            return None
+            return None, None
 
         soup = BeautifulSoup(response.text, 'html.parser')
         items = soup.select_one(self.selector)
+        heading = soup.select_one("h1#page-title")
+        name = heading.text.strip() if heading else None
 
         if not items:
             self.logger.error(f"No items found on {url_as_str}")
@@ -53,6 +57,6 @@ class HTMLDownloader(AbstractDownloader):
         out_path = self.output_dir / f"{url_path}.html"
         out_path.write_text(str(items), encoding="utf-8")
 
-        self.logger.debug(f"Downloaded {url_as_str}")
+        self.logger.debug(f"Downloaded {url_as_str} ({name}")
 
-        return out_path
+        return out_path, name

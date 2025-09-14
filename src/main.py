@@ -12,9 +12,13 @@ def run_pipeline():
 
     downloader = HTMLDownloader(docs)
     downloader.download_all()
-
+    # doc = Document("http://sniprf.ru/sp25-13330-2012")
+    # doc = Document("http://sniprf.ru/sp25-13330-2012")
+    # doc.downloaded_path = Path("../data/html/sp25-13330-2012.html")
+    # preprocessor = Preprocessor([doc])
     preprocessor = Preprocessor(docs)
     preprocessor.process_all()
+    preprocessor.generate_chunks()
 
     print(docs)
 
