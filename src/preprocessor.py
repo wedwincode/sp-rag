@@ -17,6 +17,10 @@ class AbstractPreprocessor(ABC):
     def process_all(self) -> None:
         pass
 
+    @abstractmethod
+    def generate_chunks(self) -> None:
+        pass
+
 
 class Preprocessor(AbstractPreprocessor):
     logger = setup_logger("markdown_preprocessor", "../logs/preprocessor.log")

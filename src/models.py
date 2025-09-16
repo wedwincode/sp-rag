@@ -1,4 +1,5 @@
 from pathlib import Path
+from uuid import uuid4, UUID
 
 from pydantic import HttpUrl
 
@@ -32,4 +33,6 @@ class Document:
 
 class Chunk:
     def __init__(self, text: str):
-        self.text = text
+        self.id: UUID = uuid4()
+        self.text: str = text
+

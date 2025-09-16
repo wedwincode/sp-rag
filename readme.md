@@ -24,6 +24,6 @@ This project implements a Retrieval-Augmented Generation (RAG) pipeline for work
 
 - ChromaDB
 
-- LangChain (for text splitting and orchestration)
+- html_to_markdown library
 
 - BeautifulSoup (for HTML preprocessing)
