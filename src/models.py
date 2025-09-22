@@ -36,3 +36,26 @@ class Chunk:
         self.id: UUID = uuid4()
         self.text: str = text
 
+
+class Query:
+    def __init__(self, text: str):
+        self.text = text
+
+
+class PreparedQuery(Query):
+    pass
+
+
+class Answer:
+    def __init__(self, text: str):
+        self.text = text
+
+
+class FoundEmbedding:
+    def __init__(self, text: str, document_name: str | None = None, document_url: str | None = None):
+        self.text: str = text
+        self.document_name: str | None = document_name
+        self.document_url: str | None = document_url
+
+    def __str__(self):
+        return f"{self.text}\nИсточник: {self.document_name} ({self.document_url})"

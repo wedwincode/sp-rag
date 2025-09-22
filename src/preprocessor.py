@@ -103,6 +103,8 @@ class Preprocessor(AbstractPreprocessor):
                     else:
                         document.chunks.append(Chunk(buf))
 
+                document.chunks.extend([Chunk(table) for table in tables])
+
                 lengths = [len(c.text) for c in document.chunks]
                 self.logger.debug(f"Total chunks for {document.name}: "
                                   f"{len(document.chunks)}, "
