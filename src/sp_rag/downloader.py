@@ -5,8 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 from pydantic import HttpUrl
 
-from src.models import Document
-from src.utils.logs import setup_logger
+from src.sp_rag.models import Document
+from src.sp_rag.utils.logs import setup_logger
 
 
 class AbstractDownloader(ABC):

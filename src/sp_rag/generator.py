@@ -2,11 +2,11 @@ from abc import ABC, abstractmethod
 
 from yandex_cloud_ml_sdk import YCloudML
 
-from src.database import AbstractConnector
-from src.models import Query, PreparedQuery, Answer
-from src.retriever import AbstractRetriever, Retriever
-from src.settings import settings, StageEnum
-from src.utils.logs import setup_logger
+from src.sp_rag.database import AbstractConnector
+from src.sp_rag.models import Query, PreparedQuery, Answer
+from src.sp_rag.retriever import AbstractRetriever, Retriever
+from src.sp_rag.settings import settings, StageEnum
+from src.sp_rag.utils.logs import setup_logger
 
 
 class AbstractGenerator(ABC):

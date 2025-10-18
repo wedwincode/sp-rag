@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 from chromadb.api.models.AsyncCollection import AsyncCollection
 from yandex_cloud_ml_sdk import YCloudML
 
-from src.database import AbstractConnector
-from src.models import Document, Query
-from src.settings import settings
-from src.utils.logs import setup_logger
+from src.sp_rag.database import AbstractConnector
+from src.sp_rag.models import Document, Query
+from src.sp_rag.settings import settings
+from src.sp_rag.utils.logs import setup_logger
 
 
 class AbstractVectorizer(ABC):

@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from src.database import AbstractConnector
-from src.models import Query, FoundEmbedding
-from src.utils.logs import setup_logger
-from src.vectorizer import YandexVectorizer
+from src.sp_rag.database import AbstractConnector
+from src.sp_rag.models import Query, FoundEmbedding
+from src.sp_rag.utils.logs import setup_logger
+from src.sp_rag.vectorizer import YandexVectorizer
 
 
 class AbstractRetriever(ABC):

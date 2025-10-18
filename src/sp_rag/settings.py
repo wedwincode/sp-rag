@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     CHROMA_DB_HOST: str = "localhost"
     CHROMA_DB_PORT: int = 8000
 
-    model_config = SettingsConfigDict(env_file="../.env")
+    model_config = SettingsConfigDict(env_file="../../.env")
 
 
 settings = Settings()

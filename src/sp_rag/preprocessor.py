@@ -7,9 +7,9 @@ from bs4 import Tag
 from html_to_markdown import convert_to_markdown
 from matplotlib import pyplot as plt
 
-from src.models import Document, Chunk
-from src.settings import StageEnum, settings
-from src.utils.logs import setup_logger
+from src.sp_rag.models import Document, Chunk
+from src.sp_rag.settings import StageEnum, settings
+from src.sp_rag.utils.logs import setup_logger
 
 
 class AbstractPreprocessor(ABC):
