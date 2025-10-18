@@ -14,7 +14,6 @@ class Document:
         self.chunks: list[Chunk] = []
 
     def __str__(self):
-
         return self._get_str()
 
     def __repr__(self):
