@@ -1,3 +1,4 @@
+import logging
 import statistics
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -7,9 +8,9 @@ from bs4 import Tag
 from html_to_markdown import convert_to_markdown
 from matplotlib import pyplot as plt
 
-from src.sp_rag.models import Document, Chunk
-from src.sp_rag.settings import StageEnum, settings
-from src.sp_rag.utils.logs import setup_logger
+from sp_rag.models import Document, Chunk
+from sp_rag.settings import StageEnum, get_settings
+from sp_rag.utils.logs import setup_logger
 
 
 class AbstractPreprocessor(ABC):
@@ -22,8 +23,9 @@ class AbstractPreprocessor(ABC):
         pass
 
 
-class Preprocessor(AbstractPreprocessor):
-    logger = setup_logger("markdown_preprocessor", "../logs/preprocessor.log")
+class MarkdownPreprocessor(AbstractPreprocessor):
+    logger: logging.Logger
+    _log_file: str = "preprocessor.log"
 
     def __init__(self, documents: list[Document], save_md: bool = True, output_dir: str = "../data/md"):
         self.documents = documents
@@ -31,6 +33,14 @@ class Preprocessor(AbstractPreprocessor):
         self.output_dir = Path(output_dir)
 
         Path(output_dir).mkdir(parents=True, exist_ok=True)
+
+        if MarkdownPreprocessor.logger is None:
+            MarkdownPreprocessor.logger = setup_logger("preprocessor", "preprocessor.log")
+
+    @classmethod
+    def set_log_file(cls, log_file: str):
+        cls._log_file = log_file
+        cls.logger = setup_logger("preprocessor", log_file)
 
     def process_all(self) -> None:
         for document in self.documents:
@@ -112,7 +122,7 @@ class Preprocessor(AbstractPreprocessor):
                                   f"max={max(lengths)}, "
                                   f"median={statistics.median(lengths)}")
 
-                if settings.STAGE == StageEnum.LOCAL:
+                if get_settings().STAGE == StageEnum.LOCAL:
                     df = pd.DataFrame(lengths, columns=["Длина"])
                     bins = range(0, 801, 50)
                     df["Интервал"] = pd.cut(df["Длина"], bins=bins, right=False)

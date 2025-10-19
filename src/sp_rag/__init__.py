@@ -1,12 +1,12 @@
 from .models import Document
-from .preprocessor import Preprocessor
+from .preprocessor import MarkdownPreprocessor
 from .database import AbstractConnector, ChromaDBConnectorAsync
 from .vectorizer import AbstractVectorizer, YandexVectorizer
 from .generator import Generator
 
 __all__ = [
     "Document",
-    "Preprocessor",
+    "MarkdownPreprocessor",
     "AbstractConnector",
     "ChromaDBConnectorAsync",
     "AbstractVectorizer",

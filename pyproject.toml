@@ -11,9 +11,9 @@ authors = [{ name = "wedwincode", email = "edwindenisovelers9864@gmail.com" }]
 requires-python = ">=3.9"
 dependencies = [
     "beautifulsoup4==4.14.2",
-    "chromadb==1.2.0",
+    "chromadb-client==1.1.1",
     "html-to-markdown==1.10.0",
-    "matplotlib==3.10.7",
+    "matplotlib==3.9.0",
     "pandas==2.3.3",
     "pydantic==2.12.3",
     "pydantic-settings==2.11.0",

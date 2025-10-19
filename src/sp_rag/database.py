@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import TypeVar, Generic
 
 from chromadb import AsyncHttpClient
 from chromadb.api import AsyncClientAPI
@@ -6,14 +7,18 @@ from chromadb.api.models.AsyncCollection import AsyncCollection
 from chromadb.config import Settings
 
 
-class AbstractConnector(ABC):
+TClient = TypeVar("TClient")
+TCollection = TypeVar("TCollection")
+
+
+class AbstractConnector(ABC, Generic[TClient, TCollection]):
 
     @abstractmethod
-    async def _get_connector(self) -> AsyncClientAPI:
+    async def _get_connector(self) -> TClient:
         pass
 
     @abstractmethod
-    async def get_collection(self, collection_name: str) -> AsyncCollection:  # todo: async collection is chromadb class
+    async def get_collection(self, collection_name: str) -> TCollection:
         pass
 
     @abstractmethod
@@ -21,7 +26,7 @@ class AbstractConnector(ABC):
         pass
 
 
-class ChromaDBConnectorAsync(AbstractConnector):
+class ChromaDBConnectorAsync(AbstractConnector[AsyncClientAPI, AsyncCollection]):
     def __init__(self, host: str = "localhost", port: int = 8000):
         self.host = host
         self.port = port

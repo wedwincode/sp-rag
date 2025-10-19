@@ -1,9 +1,10 @@
+import logging
 from abc import ABC, abstractmethod
 
-from src.sp_rag.database import AbstractConnector
-from src.sp_rag.models import Query, FoundEmbedding
-from src.sp_rag.utils.logs import setup_logger
-from src.sp_rag.vectorizer import YandexVectorizer
+from sp_rag.database import AbstractConnector
+from sp_rag.models import Query, FoundEmbedding
+from sp_rag.utils.logs import setup_logger
+from sp_rag.vectorizer import YandexVectorizer
 
 
 class AbstractRetriever(ABC):
@@ -13,10 +14,19 @@ class AbstractRetriever(ABC):
 
 
 class Retriever(AbstractRetriever):
-    logger = setup_logger("retriever", "../logs/retriever.log")
+    logger: logging.Logger
+    _log_file: str = "retriever.log"
 
     def __init__(self, db: AbstractConnector):
         self.db = db
+
+        if Retriever.logger is None:
+            Retriever.logger = setup_logger("retriever", "retriever.log")
+
+    @classmethod
+    def set_log_file(cls, log_file: str):
+        cls._log_file = log_file
+        cls.logger = setup_logger("retriever", log_file)
 
     async def get_embeddings_for_query(self, query: Query, size: int = 4) -> list[FoundEmbedding]:
         vector = YandexVectorizer.vectorize_query(query)

@@ -1,12 +1,13 @@
+import logging
 from abc import ABC, abstractmethod
 
 from yandex_cloud_ml_sdk import YCloudML
 
-from src.sp_rag.database import AbstractConnector
-from src.sp_rag.models import Query, PreparedQuery, Answer
-from src.sp_rag.retriever import AbstractRetriever, Retriever
-from src.sp_rag.settings import settings, StageEnum
-from src.sp_rag.utils.logs import setup_logger
+from sp_rag.database import AbstractConnector
+from sp_rag.models import Query, PreparedQuery, Answer
+from sp_rag.retriever import AbstractRetriever, Retriever
+from sp_rag.settings import get_settings, StageEnum
+from sp_rag.utils.logs import setup_logger
 
 
 class AbstractGenerator(ABC):
@@ -20,13 +21,22 @@ class AbstractGenerator(ABC):
 
 
 class Generator(AbstractGenerator):
-    logger = setup_logger("generator", "../logs/generator.log")
+    logger: logging.Logger
+    _log_file: str = "generator.log"
 
     def __init__(self, db: AbstractConnector):
         self._retriever: AbstractRetriever = Retriever(db)
-        self._sdk = YCloudML(folder_id=settings.YC_FOLDER_ID, auth=settings.YC_API_KEY)
+        self._sdk = YCloudML(folder_id=get_settings().YC_FOLDER_ID, auth=get_settings().YC_API_KEY)
         self.gpt_model = self._sdk.models.completions("yandexgpt")
         self.gpt_model.configure(temperature=0.3, max_tokens=600)
+
+        if Generator.logger is None:
+            Generator.logger = setup_logger("generator", "generator.log")
+
+    @classmethod
+    def set_log_file(cls, log_file: str):
+        cls._log_file = log_file
+        cls.logger = setup_logger("generator", log_file)
 
     async def generate_answer(self, query: Query) -> Answer:
         prepared = await self._prepare_query(query)
@@ -48,7 +58,7 @@ class Generator(AbstractGenerator):
         Если необходимая формула представлена в виде ссылки на изображение, то в ответе предоставь эту ссылку в формате markdown.
         """
 
-        if settings.STAGE != StageEnum.PRODUCTION:
+        if get_settings().STAGE != StageEnum.PRODUCTION:
             self.logger.debug(f"Prompt: {prompt}")
 
         return PreparedQuery(prompt)

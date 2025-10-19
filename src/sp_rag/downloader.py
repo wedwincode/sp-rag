@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 
@@ -5,8 +6,8 @@ import requests
 from bs4 import BeautifulSoup
 from pydantic import HttpUrl
 
-from src.sp_rag.models import Document
-from src.sp_rag.utils.logs import setup_logger
+from sp_rag.models import Document
+from sp_rag.utils.logs import setup_logger
 
 
 class AbstractDownloader(ABC):
@@ -16,7 +17,8 @@ class AbstractDownloader(ABC):
 
 
 class HTMLDownloader(AbstractDownloader):
-    logger = setup_logger("html_downloader", "../logs/downloader.log")
+    logger: logging.Logger
+    _log_file: str = "downloader.log"
 
     def __init__(self, documents: list[Document], output_dir: str = "../data/html",
                  selector: str = "div.field-item.even"):
@@ -25,6 +27,14 @@ class HTMLDownloader(AbstractDownloader):
         self.selector = selector
 
         Path(output_dir).mkdir(parents=True, exist_ok=True)
+
+        if HTMLDownloader.logger is None:
+            HTMLDownloader.logger = setup_logger("html_downloader", "downloader.log")
+
+    @classmethod
+    def set_log_file(cls, log_file: str):
+        cls._log_file = log_file
+        cls.logger = setup_logger("html_downloader", log_file)
 
     def download_all(self) -> None:
         for document in self.documents:

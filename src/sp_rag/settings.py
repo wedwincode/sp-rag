@@ -1,4 +1,5 @@
 from enum import Enum
+from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -16,7 +17,9 @@ class Settings(BaseSettings):
     CHROMA_DB_HOST: str = "localhost"
     CHROMA_DB_PORT: int = 8000
 
-    model_config = SettingsConfigDict(env_file="../../.env")
+    model_config = SettingsConfigDict()
 
 
-settings = Settings()
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
